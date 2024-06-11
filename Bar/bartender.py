@@ -14,4 +14,4 @@ class Bartender(threading.Thread):
         time.sleep(2)
         print(f'Bartender terminou pedido para {garcom.nome}', flush=True)
         self.ocupado = False
-        self.bartender.notify()
+        self.bartender.notify_all()

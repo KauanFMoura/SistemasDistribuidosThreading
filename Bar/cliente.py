@@ -19,8 +19,13 @@ class Cliente(threading.Thread):
 
             garcom = random.choice(self.bar.garcoes_disponiveis)
             with garcom.garcom:
+                if len(garcom.pedidos) == garcom.limite_atendimentos:
+                    garcom.garcom.wait()
+
                 garcom.registrar_pedido(self)
                 garcom.garcom.notify()
+
+            self.bar.bar.notify_all()
 
     def esperar_pedido(self):
         print(f'Cliente {self.numero} está esperando pedido', flush=True)
@@ -40,12 +45,13 @@ class Cliente(threading.Thread):
             self.satisfeito = True  # Cliente está satisfeito
             self.bar.cliente_satisfeito()  # Adiciona o cliente à lista de clientes satisfeitos
         else:
-            self.bar.clientes_nao_atendido(self)  # Adiciona o cliente à lista de clientes não atendidos
             self.pedido_entregue = False
             print(f'Cliente {self.numero} não está satisfeito', flush=True)
 
     def run(self):
+        print(f'Cliente {self.numero} entrou no bar', flush=True)
         while self.bar.aberto and not self.satisfeito:
+            self.bar.clientes_nao_atendidos.append(self)
             self.fazer_pedido()
             self.esperar_pedido()
             self.receber_pedido()

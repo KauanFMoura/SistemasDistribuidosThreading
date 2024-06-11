@@ -8,25 +8,23 @@ from cliente import Cliente
 
 if __name__ == '__main__':
 
-    clientes_no_bar = 6
+    clientes_no_bar = 20
     limite_atendimentos_garcom = 3
     rodadas_disponiveis = 20
-    garcoes_disponiveis = 1
+    garcoes_disponiveis = 3
 
     bar = Bar('Bar do Zé', rodadas_disponiveis, clientes_no_bar)
     bartender = Bartender()
     garcoes = [Garcom(f'Garçom {i}', limite_atendimentos_garcom, bar, bartender) for i in range(garcoes_disponiveis)]
     clientes = [Cliente(i, bar) for i in range(clientes_no_bar)]
-    bar.clientes_nao_atendidos = clientes
 
     bar.start()
-    for garcom in garcoes:
-        garcom.start()
 
     for cliente in clientes:
-        print(f'Cliente {cliente.numero} entrou no bar', flush=True)
         cliente.start()
-        time.sleep(random.randint(0, 2))
+
+    for garcom in garcoes:
+        garcom.start()
 
     bar.join()
 

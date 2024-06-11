@@ -19,12 +19,10 @@ class Bar(threading.Thread):
     def add_garcom_disponivel(self, garcom):
         with self.bar:
             self.garcoes_disponiveis.append(garcom)
-            self.bar.notify()
+            self.bar.notify_all()
 
     def remove_garcom_disponivel(self, garcom):
-        with self.bar:
-            self.garcoes_disponiveis.remove(garcom)
-            self.bar.notify()
+        self.garcoes_disponiveis.remove(garcom)
 
     def fechar(self):
         with self.bar:  # Garante que não haverá leitura suja

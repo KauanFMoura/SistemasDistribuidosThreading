@@ -31,7 +31,7 @@ class Garcom(threading.Thread):
         self.pedidos.append(cliente)
         self.bar.cliente_atendido(cliente)
         print(f'Cliente {cliente.numero} fez pedido para {self.nome}', flush=True)
-        print(f'Clientes não atendidos: {len(self.bar.clientes_nao_atendidos)}', flush=True)
+        print(len(self.pedidos))
 
         self.garcom.notify()
 
