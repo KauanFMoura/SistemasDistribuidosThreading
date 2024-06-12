@@ -1,17 +1,15 @@
 import threading
 import time
-class Bartender(threading.Thread):
+import random
 
-    def __init__(self):
-        super().__init__()
+class Bartender:
+    def __init__(self, bar, garcons):
         self.bartender = threading.Condition()
-        self.ocupado = False
-        self.clientes_atendidos = 0
 
-    def preparar_pedidos(self, garcom):
-        self.ocupado = True
-        print(f'Bartender preparando pedido para {garcom.nome}', flush=True)
-        time.sleep(2)
-        print(f'Bartender terminou pedido para {garcom.nome}', flush=True)
-        self.ocupado = False
-        self.bartender.notify_all()
+    def fazer_bebida(self, garcom):
+        with self.bartender:
+            print(f'Bartender fazendo bebida para garçom {garcom.numero}')
+            time.sleep(random.randint(1, 5))
+            print(f'Bartender terminou bebida para garçom {garcom.numero}')
+            with garcom.garcom:
+                garcom.garcom.notify_all()

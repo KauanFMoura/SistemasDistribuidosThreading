@@ -1,33 +1,36 @@
 import threading
-import time
-import random
-from bartender import Bartender
-from bar import Bar
-from garcom import Garcom
-from cliente import Cliente
+from Bar.bar import Bar
+from Bar.bartender import Bartender
+from Bar.garcom import Garcom
+from Bar.cliente import Cliente
 
 if __name__ == '__main__':
+    n_clientes = 10
+    n_garcoms = 3
+    rodadas = 5
+    limite_atendimentos = 3
 
-    clientes_no_bar = 20
-    limite_atendimentos_garcom = 3
-    rodadas_disponiveis = 20
-    garcoes_disponiveis = 3
-
-    bar = Bar('Bar do Zé', rodadas_disponiveis, clientes_no_bar)
-    bartender = Bartender()
-    garcoes = [Garcom(f'Garçom {i}', limite_atendimentos_garcom, bar, bartender) for i in range(garcoes_disponiveis)]
-    clientes = [Cliente(i, bar) for i in range(clientes_no_bar)]
+    bar = Bar(n_clientes, rodadas)
+    bartender = Bartender(bar, [])
+    garcoms = [Garcom(i, bar, limite_atendimentos, bartender) for i in range(n_garcoms)]
+    clientes = [Cliente(i, bar, garcoms) for i in range(n_clientes)]
 
     bar.start()
+
+    for garcom in garcoms:
+        garcom.start()
 
     for cliente in clientes:
         cliente.start()
 
-    for garcom in garcoes:
-        garcom.start()
-
     bar.join()
 
-    for garcom in garcoes:
+    for garcom in garcoms:
         with garcom.garcom:
             garcom.garcom.notify()
+        garcom.join()
+
+    for cliente in clientes:
+        cliente.join()
+
+    print('Bar fechado')

@@ -2,58 +2,50 @@ import threading
 import time
 import random
 
-
 class Cliente(threading.Thread):
-    def __init__(self, numero, bar):
+    def __init__(self, numero, bar, garcoms):
         super().__init__()
         self.numero = numero
-        self.bar = bar
         self.satisfeito = False
-        self.pedido_entregue = False
+        self.bar = bar
+        self.garcoms = garcoms
+        self.garcom_atendendo = None
 
     def fazer_pedido(self):
-        with self.bar.bar:
-            while len(self.bar.garcoes_disponiveis) == 0:
-                print(f'Cliente {self.numero} está esperando garçom', flush=True)
-                self.bar.bar.wait()
-
-            garcom = random.choice(self.bar.garcoes_disponiveis)
+        for garcom in self.garcoms:
             with garcom.garcom:
-                if len(garcom.pedidos) == garcom.limite_atendimentos:
-                    garcom.garcom.wait()
-
-                garcom.registrar_pedido(self)
-                garcom.garcom.notify()
-
-            self.bar.bar.notify_all()
+                if len(garcom.pedidos) < garcom.limite_atendimentos and self.bar.aberto:
+                    self.garcom_atendendo = garcom
+                    garcom.pedidos.append(self)
+                    print(f'Cliente {self.numero} fez pedido para garçom {garcom.numero}')
+                    garcom.garcom.notify()
+                    return True
+        return False
 
     def esperar_pedido(self):
-        print(f'Cliente {self.numero} está esperando pedido', flush=True)
-        while not self.pedido_entregue:
-            time.sleep(0.1)
-
-    def receber_pedido(self):
-        print(f'Cliente {self.numero} recebeu pedido', flush=True)
+        with self.garcom_atendendo.garcom:
+            while self in self.garcom_atendendo.pedidos:
+                print(f'Cliente {self.numero} esperando pedido')
+                self.garcom_atendendo.garcom.wait()
 
     def comer_pedido(self):
         print(f'Cliente {self.numero} está comendo', flush=True)
-        time.sleep(random.randint(1, 5))  # Cliente come por um tempo aleatório
+        time.sleep(random.randint(1, 5))
 
-        if random.choice([True, False]):  # Cliente pode ficar satisfeito ou não
+        if random.choice([True, False]):
             print(f'Cliente {self.numero} está satisfeito', flush=True)
-
-            self.satisfeito = True  # Cliente está satisfeito
-            self.bar.cliente_satisfeito()  # Adiciona o cliente à lista de clientes satisfeitos
+            self.satisfeito = True
+            with self.bar.bar:
+                self.bar.clientes_satisfeitos += 1
+                self.bar.bar.notify_all()
         else:
-            self.pedido_entregue = False
             print(f'Cliente {self.numero} não está satisfeito', flush=True)
 
     def run(self):
-        print(f'Cliente {self.numero} entrou no bar', flush=True)
+        print(f'Cliente {self.numero} chegou no bar')
         while self.bar.aberto and not self.satisfeito:
-            self.bar.clientes_nao_atendidos.append(self)
-            self.fazer_pedido()
-            self.esperar_pedido()
-            self.receber_pedido()
-            self.comer_pedido()
+            if self.fazer_pedido():
+                self.esperar_pedido()
+                self.comer_pedido()
 
+        print(f'Cliente {self.numero} saiu do bar')
