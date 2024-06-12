@@ -3,28 +3,21 @@ import time
 
 
 class Query(threading.Thread):
-    def __init__(self):
+    def __init__(self, bar):
         super().__init__()
         self.querys = []
+        self.bar = bar
         self.semaphore = threading.Semaphore(1)
-        self.rodando = True
 
     def run(self):
-        while self.rodando:
+        while self.bar.aberto or len(self.querys) > 0:
             with self.semaphore:
                 if self.querys:
-                    self.querys = sorted(self.querys, key=lambda x: x["time"])
                     for query in self.querys:
-                        print(query['msg'])
+                        print(query)
                     self.querys.clear()
             time.sleep(0.5)
 
-    def stop(self):
-        self.rodando = False
-
-    def add_query(self, query, horario_requisitado):
+    def add_query(self, query):
         with self.semaphore:
-            self.querys.append({
-                'msg': query,
-                'time': horario_requisitado
-            })
+            self.querys.append(query)

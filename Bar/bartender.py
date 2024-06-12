@@ -1,7 +1,6 @@
 import threading
 import time
 import random
-from datetime import datetime
 
 
 class Bartender:
@@ -11,8 +10,8 @@ class Bartender:
 
     def fazer_bebida(self, garcom):
         with self.bartender:
-            self.query.add_query(f'Bartender fazendo bebida para garçom {garcom.numero}', datetime.now())
+            self.query.add_query(f'Bartender fazendo bebida para garçom {garcom.numero}')
             time.sleep(random.randint(1, 5))
-            self.query.add_query(f'Bartender terminou bebida para garçom {garcom.numero}', datetime.now())
+            self.query.add_query(f'Bartender terminou bebida para garçom {garcom.numero}')
             with garcom.garcom:
                 garcom.garcom.notify_all()

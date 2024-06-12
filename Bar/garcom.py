@@ -1,5 +1,4 @@
 import threading
-from datetime import datetime
 
 
 class Garcom(threading.Thread):
@@ -21,7 +20,7 @@ class Garcom(threading.Thread):
             if not self.bar.aberto or len(self.pedidos) == 0:
                 return False
 
-            self.query.add_query(f'\033[43mGarçom {self.numero} recebeu todos pedidos possiveis para essa rodada\033[0m', datetime.now())
+            self.query.add_query(f'\033[43mGarçom {self.numero} recebeu todos pedidos possiveis para essa rodada\033[0m')
             return True
 
     def levar_pedido(self):
@@ -31,7 +30,7 @@ class Garcom(threading.Thread):
         with self.garcom:
             while self.pedidos:
                 cliente = self.pedidos.pop(0)
-                self.query.add_query(f'\033[38;5;82mGarçom {self.numero} entregando pedido para cliente {cliente.numero}\033[0m', datetime.now())
+                self.query.add_query(f'\033[38;5;82mGarçom {self.numero} entregando pedido para cliente {cliente.numero}\033[0m')
                 with cliente.garcom_atendendo.garcom:
                     cliente.garcom_atendendo.garcom.notify_all()
             self.garcom.notify_all()
@@ -39,8 +38,7 @@ class Garcom(threading.Thread):
     def rodada(self):
         with self.bar.bar:
             self.bar.rodadas -= 1
-            if self.bar.rodadas >= 0:
-                self.query.add_query(f'\033[44mGarçom {self.numero} terminou rodada - {self.bar.rodadas} rodadas restantes\033[0m', datetime.now())
+            self.query.add_query(f'\033[44mGarçom {self.numero} terminou rodada - {self.bar.rodadas} rodadas restantes\033[0m')
             self.bar.bar.notify_all()
 
     def run(self):
@@ -49,4 +47,4 @@ class Garcom(threading.Thread):
                 self.levar_pedido()
                 self.entregar_pedido()
                 self.rodada()
-        self.query.add_query(f'\033[31mGarçom {self.numero} saiu do bar\033[0m', datetime.now())
+        self.query.add_query(f'\033[31mGarçom {self.numero} saiu do bar\033[0m')

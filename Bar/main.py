@@ -1,6 +1,4 @@
 import threading
-import time
-
 from Bar.bar import Bar
 from Bar.bartender import Bartender
 from Bar.garcom import Garcom
@@ -13,8 +11,8 @@ if __name__ == '__main__':
     rodadas = 5
     limite_atendimentos = 3
 
-    query = Query()
-    bar = Bar(n_clientes, rodadas, query)
+    bar = Bar(n_clientes, rodadas)
+    query = Query(bar)
     bartender = Bartender(bar, [], query)
     garcoms = [Garcom(i, bar, limite_atendimentos, bartender, query) for i in range(n_garcoms)]
     clientes = [Cliente(i, bar, garcoms, query) for i in range(n_clientes)]
@@ -38,7 +36,5 @@ if __name__ == '__main__':
     for cliente in clientes:
         cliente.join()
 
-    time.sleep(3)
-    query.stop()
     print('\033[41mBar fechado\033[0m')
 
