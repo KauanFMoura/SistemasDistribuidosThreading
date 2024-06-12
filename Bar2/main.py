@@ -26,11 +26,11 @@ if __name__ == '__main__':
     bar.join()
 
     for garcom in garcoms:
+        with garcom.garcom:
+            garcom.garcom.notify()
         garcom.join()
 
     for cliente in clientes:
         cliente.join()
 
-
-    for cliente in clientes:
-        cliente.join()
+    print('Bar fechado')

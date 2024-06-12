@@ -13,7 +13,7 @@ class Bar(threading.Thread):
             while self.rodadas > 0 and self.clientes_satisfeitos < self.clientes_total:
                 self.bar.wait()
             self.aberto = False
-            print("Bar fechado")
+            print('Sem Rodadas Disponíveis')
             self.bar.notify_all()
 
     def run(self):
