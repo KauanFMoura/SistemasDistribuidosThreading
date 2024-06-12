@@ -3,7 +3,6 @@ import time
 import random
 
 class Cliente(threading.Thread):
-
     def __init__(self, numero, bar, garcoms):
         super().__init__()
         self.numero = numero
@@ -15,14 +14,12 @@ class Cliente(threading.Thread):
     def fazer_pedido(self):
         for garcom in self.garcoms:
             with garcom.garcom:
-                with self.bar.bar:
-                    if len(garcom.pedidos) < garcom.limite_atendimentos and self.bar.aberto:
-                        self.garcom_atendendo = garcom
-                        garcom.pedidos.append(self)
-                        print(f'Cliente {self.numero} fez pedido para garçom {garcom.numero}')
-                        garcom.garcom.notify_all()
-                        return True
-
+                if len(garcom.pedidos) < garcom.limite_atendimentos and self.bar.aberto:
+                    self.garcom_atendendo = garcom
+                    garcom.pedidos.append(self)
+                    print(f'Cliente {self.numero} fez pedido para garçom {garcom.numero}')
+                    garcom.garcom.notify()
+                    return True
         return False
 
     def esperar_pedido(self):
@@ -30,8 +27,6 @@ class Cliente(threading.Thread):
             while self in self.garcom_atendendo.pedidos:
                 print(f'Cliente {self.numero} esperando pedido')
                 self.garcom_atendendo.garcom.wait()
-
-            self.garcom_atendendo.garcom.notify_all()
 
     def comer_pedido(self):
         print(f'Cliente {self.numero} está comendo', flush=True)

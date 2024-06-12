@@ -5,7 +5,6 @@ from Bar2.garcom import Garcom
 from Bar2.cliente import Cliente
 
 if __name__ == '__main__':
-
     n_clientes = 10
     n_garcoms = 3
     rodadas = 5
@@ -28,6 +27,10 @@ if __name__ == '__main__':
 
     for garcom in garcoms:
         garcom.join()
+
+    for cliente in clientes:
+        cliente.join()
+
 
     for cliente in clientes:
         cliente.join()

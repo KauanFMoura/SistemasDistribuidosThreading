@@ -1,6 +1,5 @@
 import threading
 class Bar(threading.Thread):
-
     def __init__(self, n_clientes, rodadas):
         super().__init__()
         self.bar = threading.Condition()
@@ -13,7 +12,6 @@ class Bar(threading.Thread):
         with self.bar:
             while self.rodadas > 0 and self.clientes_satisfeitos < self.clientes_total:
                 self.bar.wait()
-
             self.aberto = False
             print("Bar fechado")
             self.bar.notify_all()
