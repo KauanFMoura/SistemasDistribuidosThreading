@@ -28,5 +28,5 @@ if __name__ == '__main__':
     for consumidor in consumidores:
         consumidor.join()
 
-    print(f'Total Comida produzida: {pedidos.quantidade_produzida}')
-    print(f'Total Comida consumida: {pedidos.quantidade_consumida}')
+    print(f'Total Pedidos produzidos: {pedidos.quantidade_produzida}')
+    print(f'Total Pedidos consumidos: {pedidos.quantidade_consumida}')

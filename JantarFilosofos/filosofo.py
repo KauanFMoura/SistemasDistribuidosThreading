@@ -21,6 +21,7 @@ class Filosofo(threading.Thread):
             self.mesa.tamanho_arroz -= 1
             print(self.cor + f"{self.nome} pegou um punhado de arroz. Restam {self.mesa.tamanho_arroz} punhados." + self.reset)
             self.mesa.tigela_central.notify()
+
         print(self.cor + f"{self.nome} está comendo." + self.reset)
         time.sleep(1)
         print(self.cor + f"{self.nome} terminou de comer." + self.reset)

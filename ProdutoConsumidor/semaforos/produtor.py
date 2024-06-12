@@ -9,7 +9,7 @@ class Produtor(threading.Thread):
 
     def run(self):
         while True:
-            with self.pedidos.mutex:
+            with self.pedidos.pedido:
                 if self.pedidos.quantidade_produzida >= self.pedidos.limite_produtos:
                     break
             self.pedidos.produzir(self.numero)
